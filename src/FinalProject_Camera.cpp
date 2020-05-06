@@ -275,6 +275,7 @@ int main(int argc, const char *argv[])
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.2 -> compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
                     double ttcLidar; 
+                    cout << "pre lidar cout" << endl;
                     computeTTCLidar(prevBB->lidarPoints, currBB->lidarPoints, sensorFrameRate, ttcLidar);
                     cout << "ttclidar: " << ttcLidar << endl;
                     //// EOF STUDENT ASSIGNMENT
