@@ -155,4 +155,78 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
     // ...
+    // vector<cv::KeyPoint> prevKpts = prevFrame.keypoints;
+    // vector<cv::KeyPoint> currKpts = currFrame.keypoints;
+    map<int, map<int, int>> boxIDMap;
+    map<int, map<int, int>> reverseboxIDMap; // so that no more than one boxid from prev frame matches boxid from current frame
+    for (cv::DMatch match: matches)
+    {
+        cv::KeyPoint prevKpt = prevFrame.keypoints[match.queryIdx];
+        cv::KeyPoint currKpt = currFrame.keypoints[match.trainIdx];
+        vector<int> prevBoxIDs;
+        vector<int> currBoxIDs;
+        for (vector<BoundingBox>::iterator it1 = prevFrame.boundingBoxes.begin(); it1 != prevFrame.boundingBoxes.end(); ++it1)
+        {
+            it1->roi.contains(prevKpt.pt)
+            {
+                prevBoxIDs.push_back(it1->boxID);
+            }
+        }
+
+        for (vector<BoundingBox>::iterator it2 = currFrame.boundingBoxes.begin(); it2 != currFrame.boundingBoxes.end(); ++it2)
+        {
+            it2->roi.contains(currKpt.pt)
+            {
+                currBoxIDs.push_back(it2->boxID);
+            }
+        }
+
+        if (prevBoxIDs.size() > 0 && currBoxIDs.size() > 0)
+        {
+            for (int prevBoxID: prevBoxIDs)
+            {
+                for (int currBoxID: currBoxIDs)
+                {
+                    boxIDMap[prevBoxID][currBoxID] ++;
+                }
+            }
+        }
+    }
+
+    for (auto outerBoxMap: boxIDMap)
+    {
+        int maxValue = -1;
+        int maxID = -1;
+        for (auto innerBoxMap: outerBoxMap.second)
+        {
+            if (innerBoxMap.second > maxValue)
+            {
+                maxValue = innerBoxMap.second;
+                maxID = innerBoxMap.first;
+            }
+        }
+        if (maxID != -1)
+            // bbBestMatches[outerBoxMap.first] = maxID;
+            reverseboxIDMap[maxID][outerBoxMap.first] = maxValue;
+        
+    }
+
+    // generate final result
+    for (auto outerMap: reverseboxIDMap)
+    {
+        int maxValue = -1;
+        int maxID = -1;
+        for (auto innerMap: outerMap.second)
+        {
+            if (innerMap.second > maxValue)
+            {
+                maxValue = innerMap.second;
+                maxID = innerMap.first;
+            }
+        }
+        if (maxID != -1)
+            bbBestMatches[maxID] = outerMap.first;
+            cout << maxID << ", " << outerMap.first << endl;
+    }
+
 }

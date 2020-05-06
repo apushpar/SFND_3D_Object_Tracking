@@ -1,9 +1,9 @@
-
 #ifndef matching2D_hpp
 #define matching2D_hpp
 
 #include <stdio.h>
 #include <iostream>
+// #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <vector>
@@ -19,6 +19,7 @@
 
 #include "dataStructures.h"
 
+void visualizeResults(cv::Mat img, std::vector<cv::KeyPoint> &keypoints, std::string name);
 
 void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis=false);
 void detKeypointsShiTomasi(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis=false);
