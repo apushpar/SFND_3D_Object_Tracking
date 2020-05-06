@@ -167,7 +167,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
         vector<int> currBoxIDs;
         for (vector<BoundingBox>::iterator it1 = prevFrame.boundingBoxes.begin(); it1 != prevFrame.boundingBoxes.end(); ++it1)
         {
-            it1->roi.contains(prevKpt.pt)
+            if(it1->roi.contains(prevKpt.pt))
             {
                 prevBoxIDs.push_back(it1->boxID);
             }
@@ -175,7 +175,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 
         for (vector<BoundingBox>::iterator it2 = currFrame.boundingBoxes.begin(); it2 != currFrame.boundingBoxes.end(); ++it2)
         {
-            it2->roi.contains(currKpt.pt)
+            if(it2->roi.contains(currKpt.pt))
             {
                 currBoxIDs.push_back(it2->boxID);
             }
