@@ -294,7 +294,8 @@ int main(int argc, const char *argv[])
                         
                         char str[200];
                         sprintf(str, "TTC Lidar : %f s, TTC Camera : %f s", ttcLidar, ttcCamera);
-                        putText(visImg, str, cv::Point2f(80, 50), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255));
+                        // putText(visImg, str, cv::Point2f(80, 50), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255));
+                        putText(visImg, str, cv::Point2f(80, 50), cv::FONT_ITALIC, 2, cv::Scalar(0,0,255));
 
                         string windowName = "Final Results : TTC";
                         cv::namedWindow(windowName, 4);
