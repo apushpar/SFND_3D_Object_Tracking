@@ -7,7 +7,7 @@
 
 #include "camFusion.hpp"
 #include "dataStructures.h"
-
+#include <queue>
 using namespace std;
 
 
@@ -144,11 +144,59 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     // ...
 }
 
+float getMedian(priority_queue<float> q)
+{
+    // if (q.size() == 0)
+    //     // throw exception?
+    int mid = int(q.size() / 2);
+    int i = 0;
+    while (i < mid)
+    {
+        q.pop();
+    }
+    float result;
+    if (q.size() % 2 == 0)
+    {
+        float p1 = q.top();
+        q.pop();
+        float p2 = q.top();
+        result = (p1 + p2) / 2.0;
+    }
+    else
+    {
+        result = q.top();
+    }
+    return result;
+}
 
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
     // ...
+    priority_queue <float> prevMinXQueue;
+    priority_queue <float> currMinXQueue;
+    int queue_size = 5;
+    for (auto it1 = lidarPointsPrev.begin(); it1 != lidarPointsPrev.end(); ++it1)
+    {
+        float xw = (*it1).x;
+        prevMinXQueue.push(xw);
+        if (prevMinXQueue.size() > queue_size)
+            prevMinXQueue.pop();
+    }
+
+    for (auto it2 = lidarPointsCurr.begin(); it2 != lidarPointsCurr.end(); ++it2)
+    {
+        float xw = (*it2).x;
+        currMinXQueue.push(xw);
+        if (currMinXQueue.size() > queue_size)
+            currMinXQueue.pop();
+    }
+
+    float prevMinXValueRobust = getMedian(prevMinXQueue);
+    float currMinXValueRobust = getMedian(currMinXQueue);
+
+    double dT = 1 / frameRate;
+    TTC = currMinXValueRobust * dT / (prevMinXValueRobust - currMinXValueRobust);
 }
 
 
