@@ -153,6 +153,7 @@ float getMedian(priority_queue<float> q)
     while (i < mid)
     {
         q.pop();
+        i ++;
     }
     float result;
     if (q.size() % 2 == 0)
@@ -274,7 +275,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
         }
         if (maxID != -1)
             bbBestMatches[maxID] = outerMap.first;
-            cout << maxID << ", " << outerMap.first << endl;
+            // cout << maxID << ", " << outerMap.first << endl;
     }
 
 }
