@@ -9,7 +9,7 @@
 #include <queue>
 
 float getMedianFromQueue(std::priority_queue<float> q);
-float getMedianFromVector(std::vector<float> vec, int start, int end);
+double getMedianFromVector(std::vector<double> vec, int start, int end);
 void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches, std::vector<double> &distRatios);
 
 void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<LidarPoint> &lidarPoints, float shrinkFactor, cv::Mat &P_rect_xx, cv::Mat &R_rect_xx, cv::Mat &RT);

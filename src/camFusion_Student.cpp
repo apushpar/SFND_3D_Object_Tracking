@@ -165,16 +165,16 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 {
     // ...
     std::vector<cv::DMatch> matchesForBB;
-    for (cv::DMatch match: matches)
+    for (cv::DMatch match: kptMatches)
     {
-        cv::KeyPoint prevKpt = prevFrame.keypoints[match.queryIdx];
-        cv::KeyPoint currKpt = currFrame.keypoints[match.trainIdx];
-        if (boundingBox.roi.contains(currKpt))
+        cv::KeyPoint prevKpt = kptsPrev[match.queryIdx];
+        cv::KeyPoint currKpt = kptsCurr[match.trainIdx];
+        if (boundingBox.roi.contains(currKpt.pt))
         {
             matchesForBB.push_back(match);
         }
     }
-
+    cout << matchesForBB.size() << ", ";
     // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
     vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
     getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
@@ -210,9 +210,9 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             }
         } // eof inner loop over all matched kpts
         if (!isOutlier)
-            boundingBox.kptMatches.push_back(*it1)
+            boundingBox.kptMatches.push_back(*it1);
     }     // eof outer loop over all matched kpts
-
+    cout << boundingBox.kptMatches.size() << endl;
 }
 
 
@@ -233,8 +233,8 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     // compute camera-based TTC from distance ratios
     double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
     // std::sort(distRatios.begin(), distRatios.end());
-    double medianDistRatio = getMedianFromVector(distRatios, 0, distRatios.size()-1)
-
+    double medianDistRatio = getMedianFromVector(distRatios, 0, distRatios.size()-1);
+    // cout << 
     // if(distRatios.size() % 2 == 1)
     // {
     //     medianDistRatio = distRatios[distRatios.size() / 2];
@@ -246,17 +246,17 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     
 
     double dT = 1 / frameRate;
-    TTC = -dT / (1 - medianDistRatio);
+    TTC = -dT / (1 - meanDistRatio);
 
     // STUDENT TASK (replacement for meanDistRatio)
 }
 
-float getMedianFromVector(vector<float> vec, int start, int end)
+double getMedianFromVector(vector<double> vec, int start, int end)
 {
     std::sort(vec.begin(), vec.end());
     int size = end - start + 1;
     int mid = start + (end - start) / 2;
-    float median = 0.0;
+    double median = 0.0;
     if (size % 2 == 1)
     {
         median =  vec[mid];
