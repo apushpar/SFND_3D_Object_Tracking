@@ -234,7 +234,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
     priority_queue <float> prevMinXQueue;
     priority_queue <float> currMinXQueue;
     float prevxwMin, currxwMin;
-    float prevMinXValueRobust, currMinXValueRobust
+    float prevMinXValueRobust, currMinXValueRobust;
     int queue_size = 5;
     for (auto it1 = lidarPointsPrev.begin(); it1 != lidarPointsPrev.end(); ++it1)
     {
