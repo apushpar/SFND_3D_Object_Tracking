@@ -174,12 +174,16 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
     // ...
+    bool useMedian = false;
     priority_queue <float> prevMinXQueue;
     priority_queue <float> currMinXQueue;
+    float prevxwMin, currxwMin;
+    float prevMinXValueRobust, currMinXValueRobust
     int queue_size = 5;
     for (auto it1 = lidarPointsPrev.begin(); it1 != lidarPointsPrev.end(); ++it1)
     {
         float xw = (*it1).x;
+        prevxwMin = prevxwMin < xw ? prevxwMin : xw;
         prevMinXQueue.push(xw);
         if (prevMinXQueue.size() > queue_size)
             prevMinXQueue.pop();
@@ -188,13 +192,22 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
     for (auto it2 = lidarPointsCurr.begin(); it2 != lidarPointsCurr.end(); ++it2)
     {
         float xw = (*it2).x;
+        currxwMin = currxwMin < xw ? currxwMin : xw;
         currMinXQueue.push(xw);
         if (currMinXQueue.size() > queue_size)
             currMinXQueue.pop();
     }
 
-    float prevMinXValueRobust = getMedian(prevMinXQueue);
-    float currMinXValueRobust = getMedian(currMinXQueue);
+    if (useMedian)
+    {
+        prevMinXValueRobust = getMedian(prevMinXQueue);
+        currMinXValueRobust = getMedian(currMinXQueue);
+    }
+    else
+    {
+        prevMinXValueRobust = prevxwMin;
+        currMinXValueRobust = currxwMin;
+    }
 
     double dT = 1 / frameRate;
     TTC = currMinXValueRobust * dT / (prevMinXValueRobust - currMinXValueRobust);
@@ -210,8 +223,10 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     map<int, map<int, int>> reverseboxIDMap; // so that no more than one boxid from prev frame matches boxid from current frame
     for (cv::DMatch match: matches)
     {
-        cv::KeyPoint prevKpt = prevFrame.keypoints[match.queryIdx];
-        cv::KeyPoint currKpt = currFrame.keypoints[match.trainIdx];
+        // cv::KeyPoint prevKpt = prevFrame.keypoints[match.queryIdx];
+        // cv::KeyPoint currKpt = currFrame.keypoints[match.trainIdx];
+        cv::KeyPoint prevKpt = prevFrame.keypoints[match.trainIdx];
+        cv::KeyPoint currKpt = currFrame.keypoints[match.queryIdx];
         vector<int> prevBoxIDs;
         vector<int> currBoxIDs;
         for (vector<BoundingBox>::iterator it1 = prevFrame.boundingBoxes.begin(); it1 != prevFrame.boundingBoxes.end(); ++it1)
