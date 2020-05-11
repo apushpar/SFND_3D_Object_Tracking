@@ -149,7 +149,7 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
             // compute distances and distance ratios
             double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
             double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
-
+            cout << "distCurr: " << distCurr << " distPrev: " << distPrev << " distRatio: " << distCurr / distPrev << endl;
             if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist)
             { // avoid division by zero
 
@@ -166,24 +166,52 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 {
     // ...
     std::vector<cv::DMatch> matchesForBB;
+    std::vector<double> eucDistances;
+    float shrinkFactor = 0.10;
+    cv::Rect smallerBox;
+    smallerBox.x = boundingBox.roi.x + shrinkFactor * boundingBox.roi.width / 2.0;
+    smallerBox.y = boundingBox.roi.y + shrinkFactor * boundingBox.roi.height / 2.0;
+    smallerBox.width = boundingBox.roi.width * (1 - shrinkFactor);
+    smallerBox.height = boundingBox.roi.height * (1 - shrinkFactor);
     for (cv::DMatch match: kptMatches)
     {
         cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
         cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);
-        if (boundingBox.roi.contains(currKpt.pt))
+        if (smallerBox.roi.contains(currKpt.pt))
         {
             matchesForBB.push_back(match);
+            double dist = cv::norm(currKpt.pt - prevKpt.pt);
+            eucDistances.push_back(dist);
         }
     }
     boundingBox.kptMatches = matchesForBB;
-    // cout << "org bb matches count: " << matchesForBB.size() << endl;
-    // // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
+
+    cout << "org bb matches count: " << matchesForBB.size() << endl;
+
+    // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
     // vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
     // getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
-    // double q1DistRatio = getMedianFromVector(distRatios, 0, distRatios.size()/2 - 1);
-    // double q3DistRatio = getMedianFromVector(distRatios, distRatios.size()/2 + 1, distRatios.size() - 1);
-    // double iqr = q3DistRatio - q1DistRatio;
-    // double iqrFactor = 1.2;
+    // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
+    // {
+
+    // }
+    cout << "Euclidean distances: ";
+    for (double dist: eucDistances)
+        cout << dist << ", ";
+    cout << endl;
+    double q1Dist = getMedianFromVector(eucDistances, 0, eucDistances.size()/2 - 1);
+    double q3Dist = getMedianFromVector(eucDistances, eucDistances.size()/2 + 1, eucDistances.size() - 1);
+    double meanDist = std::accumulate(eucDistances.begin(), eucDistances.end(), 0.0) / eucDistances.size();
+    double medianDist = getMedianFromVector(eucDistances, 0, eucDistances.size() - 1);
+    double iqr = q3Dist - q1Dist;
+    double iqrFactor = 1.2;
+    cout << "MeanDist: " << meanDist << endl;
+    cout << "MedianDist: " << medianDist << endl;
+    cout << "IQR: " << iqr << endl;
+    cout << "IQR lower bound: " << q1DistRatio - iqrFactor*iqr << endl;
+    cout << "IQR upper bound: " << q3DistRatio + iqrFactor*iqr << endl;
+
+
     // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
     // { // outer kpt. loop
     //     // get current keypoint and its matched partner in the prev. frame
