@@ -140,7 +140,7 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
         for (auto it2 = kptMatches.begin() + 1; it2 != kptMatches.end(); ++it2)
         { // inner kpt.-loop
 
-            double minDist = 100.0; // min. required distance
+            double minDist = 70.0; // min. required distance
 
             // get next keypoint and its matched partner in the prev. frame
             cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
@@ -177,7 +177,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     {
         cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
         cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);
-        if (smallerBox.contains(currKpt.pt))
+        if (smallerBox.contains(currKpt.pt) && smallerBox.contains(prevKpt.pt))
         {
             matchesForBB.push_back(match);
             double dist = cv::norm(currKpt.pt - prevKpt.pt);
