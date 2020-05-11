@@ -169,53 +169,54 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     for (cv::DMatch match: kptMatches)
     {
         cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
-        cv::KeyPoint currKpt = kptsCurr.aat(match.trainIdx);
+        cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);
         if (boundingBox.roi.contains(currKpt.pt))
         {
             matchesForBB.push_back(match);
         }
     }
-    cout << "org bb matches count: " << matchesForBB.size() << endl;
-    // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
-    vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
-    getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
-    double q1DistRatio = getMedianFromVector(distRatios, 0, distRatios.size()/2 - 1);
-    double q3DistRatio = getMedianFromVector(distRatios, distRatios.size()/2 + 1, distRatios.size() - 1);
-    double iqr = q3DistRatio - q1DistRatio;
-    double iqrFactor = 1.2;
-    for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
-    { // outer kpt. loop
-        // get current keypoint and its matched partner in the prev. frame
-        cv::KeyPoint kpOuterCurr = kptsCurr.at(it1->trainIdx);
-        cv::KeyPoint kpOuterPrev = kptsPrev.at(it1->queryIdx);
-        bool isOutlier = false;
-        for (auto it2 = matchesForBB.begin() + 1; it2 != matchesForBB.end(); ++it2)
-        { // inner kpt.-loop
+    boundingBox.kptMatches = matchesForBB;
+    // cout << "org bb matches count: " << matchesForBB.size() << endl;
+    // // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
+    // vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
+    // getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
+    // double q1DistRatio = getMedianFromVector(distRatios, 0, distRatios.size()/2 - 1);
+    // double q3DistRatio = getMedianFromVector(distRatios, distRatios.size()/2 + 1, distRatios.size() - 1);
+    // double iqr = q3DistRatio - q1DistRatio;
+    // double iqrFactor = 1.2;
+    // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
+    // { // outer kpt. loop
+    //     // get current keypoint and its matched partner in the prev. frame
+    //     cv::KeyPoint kpOuterCurr = kptsCurr.at(it1->trainIdx);
+    //     cv::KeyPoint kpOuterPrev = kptsPrev.at(it1->queryIdx);
+    //     bool isOutlier = false;
+    //     for (auto it2 = matchesForBB.begin() + 1; it2 != matchesForBB.end(); ++it2)
+    //     { // inner kpt.-loop
 
-            // get next keypoint and its matched partner in the prev. frame
-            cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
-            cv::KeyPoint kpInnerPrev = kptsPrev.at(it2->queryIdx);
+    //         // get next keypoint and its matched partner in the prev. frame
+    //         cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
+    //         cv::KeyPoint kpInnerPrev = kptsPrev.at(it2->queryIdx);
 
-            // compute distances and distance ratios
-            double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
-            double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
+    //         // compute distances and distance ratios
+    //         double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
+    //         double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
 
-            if (distPrev > std::numeric_limits<double>::epsilon())
-            { // avoid division by zero
+    //         if (distPrev > std::numeric_limits<double>::epsilon())
+    //         { // avoid division by zero
 
-                double distRatio = distCurr / distPrev;
-                if ((distRatio > q3DistRatio + iqrFactor*iqr) || (distRatio < q1DistRatio - iqrFactor*iqr))
-                {
-                    cout << distRatio << ", " << q3DistRatio + iqrFactor*iqr << ", " << q1DistRatio - iqrFactor*iqr << endl;
-                    isOutlier = true;
-                    break;
-                }
-            }
-        } // eof inner loop over all matched kpts
-        if (!isOutlier)
-            boundingBox.kptMatches.push_back(*it1);
-    }     // eof outer loop over all matched kpts
-    cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
+    //             double distRatio = distCurr / distPrev;
+    //             if ((distRatio > q3DistRatio + iqrFactor*iqr) || (distRatio < q1DistRatio - iqrFactor*iqr))
+    //             {
+    //                 cout << distRatio << ", " << q3DistRatio + iqrFactor*iqr << ", " << q1DistRatio - iqrFactor*iqr << endl;
+    //                 isOutlier = true;
+    //                 break;
+    //             }
+    //         }
+    //     } // eof inner loop over all matched kpts
+    //     if (!isOutlier)
+    //         boundingBox.kptMatches.push_back(*it1);
+    // }     // eof outer loop over all matched kpts
+    // cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
 }
 
 
@@ -237,16 +238,6 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
     // std::sort(distRatios.begin(), distRatios.end());
     double medianDistRatio = getMedianFromVector(distRatios, 0, distRatios.size()-1);
-    // cout << 
-    // if(distRatios.size() % 2 == 1)
-    // {
-    //     medianDistRatio = distRatios[distRatios.size() / 2];
-    // }
-    // else
-    // {
-    //     medianDistRatio = (distRatios[distRatios.size() / 2] + distRatios[(distRatios.size()-1) / 2]) / 2;
-    // }
-    
 
     double dT = 1 / frameRate;
     TTC = -dT / (1 - meanDistRatio);
@@ -351,8 +342,8 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     map<int, map<int, int>> reverseboxIDMap; // so that no more than one boxid from prev frame matches boxid from current frame
     for (cv::DMatch match: matches)
     {
-        cv::KeyPoint prevKpt = prevFrame.keypoints[match.queryIdx];
-        cv::KeyPoint currKpt = currFrame.keypoints[match.trainIdx];
+        cv::KeyPoint prevKpt = prevFrame.keypoints.at(match.queryIdx);
+        cv::KeyPoint currKpt = currFrame.keypoints.at(match.trainIdx);
         // cv::KeyPoint prevKpt = prevFrame.keypoints[match.trainIdx];
         // cv::KeyPoint currKpt = currFrame.keypoints[match.queryIdx];
         vector<int> prevBoxIDs;
