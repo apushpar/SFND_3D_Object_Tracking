@@ -181,6 +181,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     double q1DistRatio = getMedianFromVector(distRatios, 0, distRatios.size()/2 - 1);
     double q3DistRatio = getMedianFromVector(distRatios, distRatios.size()/2 + 1, distRatios.size() - 1);
     double iqr = q3DistRatio - q1DistRatio;
+    double iqrFactor = 1;
     for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
     { // outer kpt. loop
         // get current keypoint and its matched partner in the prev. frame
@@ -202,7 +203,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             { // avoid division by zero
 
                 double distRatio = distCurr / distPrev;
-                if ((distRatio > q3DistRatio + 1.5*iqr) || (distRatio < q1DistRatio - 1.5*iqr))
+                if ((distRatio > q3DistRatio + iqrFactor*iqr) || (distRatio < q1DistRatio - iqrFactor*iqr))
                 {
                     isOutlier = true;
                     break;
