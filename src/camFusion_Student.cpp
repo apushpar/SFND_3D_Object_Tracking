@@ -154,7 +154,7 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
             { // avoid division by zero
 
                 double distRatio = distCurr / distPrev;
-                cout << "distRatio: " << distRatio << endl;
+                // cout << "distRatio: " << distRatio << endl;
                 distRatios.push_back(distRatio);
             }
         } // eof inner loop over all matched kpts
@@ -238,9 +238,10 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
     // std::sort(distRatios.begin(), distRatios.end());
     double medianDistRatio = getMedianFromVector(distRatios, 0, distRatios.size()-1);
-
+    cout << "meanDistanceRatio: " << meanDistRatio << endl;
+    cout << "medianDistanceRatio: " << medianDistRatio << endl;
     double dT = 1 / frameRate;
-    TTC = -dT / (1 - meanDistRatio);
+    TTC = -dT / (1 - medianDistRatio);
 
     // STUDENT TASK (replacement for meanDistRatio)
 }
