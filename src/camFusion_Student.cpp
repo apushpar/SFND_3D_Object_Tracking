@@ -177,7 +177,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     {
         cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
         cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);
-        if (smallerBox.roi.contains(currKpt.pt))
+        if (smallerBox.contains(currKpt.pt))
         {
             matchesForBB.push_back(match);
             double dist = cv::norm(currKpt.pt - prevKpt.pt);
