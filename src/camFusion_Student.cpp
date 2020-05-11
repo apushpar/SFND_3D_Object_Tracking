@@ -208,8 +208,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     cout << "MeanDist: " << meanDist << endl;
     cout << "MedianDist: " << medianDist << endl;
     cout << "IQR: " << iqr << endl;
-    cout << "IQR lower bound: " << q1DistRatio - iqrFactor*iqr << endl;
-    cout << "IQR upper bound: " << q3DistRatio + iqrFactor*iqr << endl;
+    cout << "IQR lower bound: " << q1Dist - iqrFactor*iqr << endl;
+    cout << "IQR upper bound: " << q3Dist + iqrFactor*iqr << endl;
 
 
     // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
