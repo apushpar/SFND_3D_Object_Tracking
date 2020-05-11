@@ -184,7 +184,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             eucDistances.push_back(dist);
         }
     }
-    boundingBox.kptMatches = matchesForBB;
+    // boundingBox.kptMatches = matchesForBB;
 
     cout << "org bb matches count: " << matchesForBB.size() << endl;
 
@@ -211,7 +211,19 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     cout << "IQR lower bound: " << q1Dist - iqrFactor*iqr << endl;
     cout << "IQR upper bound: " << q3Dist + iqrFactor*iqr << endl;
 
-
+    double rangeFactor = 3;
+    for (cv::DMatch match: kptMatches)
+    {
+        cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
+        cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);
+        double dist = cv::norm(currKpt.pt - prevKpt.pt);
+        if (dist <= (medianDist + rangeFactor*medianDist) && dist >= (medianDist - rangeFactor*medianDist))
+        {
+            boundingBox.kptMatches.push_back(match);
+        }
+    }
+    cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
+    
     // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
     // { // outer kpt. loop
     //     // get current keypoint and its matched partner in the prev. frame
