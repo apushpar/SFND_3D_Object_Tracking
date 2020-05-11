@@ -205,7 +205,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
                 double distRatio = distCurr / distPrev;
                 if ((distRatio > q3DistRatio + iqrFactor*iqr) || (distRatio < q1DistRatio - iqrFactor*iqr))
                 {
-                    cout << distRatio << ", " << q3DistRatio + iqrFactor*iqr << ", " << distRatio < q1DistRatio - iqrFactor*iqr << endl;
+                    cout << distRatio << ", " << q3DistRatio + iqrFactor*iqr << ", " << q1DistRatio - iqrFactor*iqr << endl;
                     isOutlier = true;
                     break;
                 }
