@@ -174,14 +174,14 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             matchesForBB.push_back(match);
         }
     }
-    cout << matchesForBB.size() << ", ";
+    cout << "org bb matches count: " <<matchesForBB.size() << endl;
     // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
     vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
     getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
     double q1DistRatio = getMedianFromVector(distRatios, 0, distRatios.size()/2 - 1);
     double q3DistRatio = getMedianFromVector(distRatios, distRatios.size()/2 + 1, distRatios.size() - 1);
     double iqr = q3DistRatio - q1DistRatio;
-    double iqrFactor = 1;
+    double iqrFactor = 1.2;
     for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
     { // outer kpt. loop
         // get current keypoint and its matched partner in the prev. frame
@@ -205,6 +205,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
                 double distRatio = distCurr / distPrev;
                 if ((distRatio > q3DistRatio + iqrFactor*iqr) || (distRatio < q1DistRatio - iqrFactor*iqr))
                 {
+                    cout << distRatio << ", " << q3DistRatio + iqrFactor*iqr << ", " << distRatio < q1DistRatio - iqrFactor*iqr << endl;
                     isOutlier = true;
                     break;
                 }
@@ -213,7 +214,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         if (!isOutlier)
             boundingBox.kptMatches.push_back(*it1);
     }     // eof outer loop over all matched kpts
-    cout << boundingBox.kptMatches.size() << endl;
+    cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
 }
 
 

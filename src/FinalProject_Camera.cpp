@@ -95,7 +95,7 @@ int main(int argc, const char *argv[])
         if (dataBuffer.size() > dataBufferSize)
             dataBuffer.erase(dataBuffer.begin());
 
-        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        cout << "#1 : LOAD IMAGE INTO BUFFER done: " << imgFullFilename << endl;
 
 
         /* DETECT & CLASSIFY OBJECTS */
