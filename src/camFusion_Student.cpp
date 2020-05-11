@@ -149,12 +149,12 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
             // compute distances and distance ratios
             double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
             double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
-            cout << "distCurr: " << distCurr << " distPrev: " << distPrev << " distRatio: " << distCurr / distPrev << endl;
+            
             if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist)
             { // avoid division by zero
 
                 double distRatio = distCurr / distPrev;
-                // cout << "distRatio: " << distRatio << endl;
+                cout << "distCurr: " << distCurr << " distPrev: " << distPrev << " distRatio: " << distRatio << endl;
                 distRatios.push_back(distRatio);
             }
         } // eof inner loop over all matched kpts
