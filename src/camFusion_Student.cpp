@@ -140,8 +140,8 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
         for (auto it2 = kptMatches.begin() + 1; it2 != kptMatches.end(); ++it2)
         { // inner kpt.-loop
 
-            double minDist = 70.0; // min. required distance
-
+            double minDist = 100.0; // min. required distance
+            double maxDist = 160.0;
             // get next keypoint and its matched partner in the prev. frame
             cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
             cv::KeyPoint kpInnerPrev = kptsPrev.at(it2->queryIdx);
@@ -150,11 +150,11 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
             double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
             double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
             
-            if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist)
+            if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist && distCurr <= maxDist)
             { // avoid division by zero
 
                 double distRatio = distCurr / distPrev;
-                cout << "distCurr: " << distCurr << " distPrev: " << distPrev << " distRatio: " << distRatio << endl;
+                // cout << "distCurr: " << distCurr << " distPrev: " << distPrev << " distRatio: " << distRatio << endl;
                 distRatios.push_back(distRatio);
             }
         } // eof inner loop over all matched kpts
@@ -167,7 +167,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     // ...
     std::vector<cv::DMatch> matchesForBB;
     std::vector<double> eucDistances;
-    float shrinkFactor = 0.10;
+    float shrinkFactor = -0.10;
     cv::Rect smallerBox;
     smallerBox.x = boundingBox.roi.x + shrinkFactor * boundingBox.roi.width / 2.0;
     smallerBox.y = boundingBox.roi.y + shrinkFactor * boundingBox.roi.height / 2.0;
@@ -178,6 +178,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
         cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);
         if (smallerBox.contains(currKpt.pt) && smallerBox.contains(prevKpt.pt))
+        // if (boundingBox.roi.contains(currKpt.pt) && boundingBox.roi.contains(prevKpt.pt))
         {
             matchesForBB.push_back(match);
             double dist = cv::norm(currKpt.pt - prevKpt.pt);
@@ -211,8 +212,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     cout << "IQR lower bound: " << q1Dist - iqrFactor*iqr << endl;
     cout << "IQR upper bound: " << q3Dist + iqrFactor*iqr << endl;
 
-    double rangeFactor = 3;
-    for (cv::DMatch match: kptMatches)
+    double rangeFactor = 2.5;
+    for (cv::DMatch match: matchesForBB)
     {
         cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
         cv::KeyPoint currKpt = kptsCurr.at(match.trainIdx);

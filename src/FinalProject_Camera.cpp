@@ -153,8 +153,8 @@ int main(int argc, const char *argv[])
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
         // string detectorType = "SHITOMASI";
         // string detectorType = "HARRIS";
-        string detectorType = "FAST";
-        // string detectorType = "BRISK";
+        // string detectorType = "FAST";
+        string detectorType = "BRISK";
         // string detectorType = "ORB";
         // string detectorType = "AKAZE";
         // string detectorType = "SIFT";
@@ -196,8 +196,8 @@ int main(int argc, const char *argv[])
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         cv::Mat descriptors;
-        // string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
-        string descriptorType = "ORB";
+        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+        // string descriptorType = "ORB";
         // string descriptorType = "FREAK";
         // string descriptorType = "AKAZE";
         // string descriptorType = "SIFT";
