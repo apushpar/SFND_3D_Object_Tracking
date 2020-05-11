@@ -168,8 +168,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     std::vector<cv::DMatch> matchesForBB;
     for (cv::DMatch match: kptMatches)
     {
-        cv::KeyPoint prevKpt = kptsPrev[match.queryIdx];
-        cv::KeyPoint currKpt = kptsCurr[match.trainIdx];
+        cv::KeyPoint prevKpt = kptsPrev.at(match.queryIdx);
+        cv::KeyPoint currKpt = kptsCurr.aat(match.trainIdx);
         if (boundingBox.roi.contains(currKpt.pt))
         {
             matchesForBB.push_back(match);
