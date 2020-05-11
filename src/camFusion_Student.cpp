@@ -154,6 +154,7 @@ void getKeyPointDistanceRatios(std::vector<cv::KeyPoint> &kptsPrev, std::vector<
             { // avoid division by zero
 
                 double distRatio = distCurr / distPrev;
+                cout << "distRatio: " << distRatio << endl;
                 distRatios.push_back(distRatio);
             }
         } // eof inner loop over all matched kpts
@@ -174,7 +175,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             matchesForBB.push_back(match);
         }
     }
-    cout << "org bb matches count: " <<matchesForBB.size() << endl;
+    cout << "org bb matches count: " << matchesForBB.size() << endl;
     // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
     vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
     getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
