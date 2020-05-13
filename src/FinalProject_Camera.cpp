@@ -130,7 +130,7 @@ int main(int argc, const char *argv[])
         clusterLidarWithROI((dataBuffer.end()-1)->boundingBoxes, (dataBuffer.end() - 1)->lidarPoints, shrinkFactor, P_rect_00, R_rect_00, RT);
 
         // Visualize 3D objects
-        bVis = true;
+        bVis = false;
         // if(dataBuffer.size() == 1)
         if(bVis)
         {
@@ -142,7 +142,7 @@ int main(int argc, const char *argv[])
         
         
         // REMOVE THIS LINE BEFORE PROCEEDING WITH THE FINAL PROJECT
-        continue; // skips directly to the next image without processing what comes beneath
+        // continue; // skips directly to the next image without processing what comes beneath
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -237,6 +237,9 @@ int main(int argc, const char *argv[])
             //// TASK FP.1 -> match list of 3D objects (vector<BoundingBox>) between current and previous frame (implement ->matchBoundingBoxes)
             map<int, int> bbBestMatches;
             matchBoundingBoxes(matches, bbBestMatches, *(dataBuffer.end()-2), *(dataBuffer.end()-1)); // associate bounding boxes between current and previous frame using keypoint matches
+            for (const auto& x : bbBestMatches) {
+                std::cout << x.first << ": " << x.second << "\n";
+            }
             //// EOF STUDENT ASSIGNMENT
 
             // store matches in current data frame
@@ -267,7 +270,8 @@ int main(int argc, const char *argv[])
                         prevBB = &(*it2);
                     }
                 }
-                cout << currBB->lidarPoints.size() << ", " << prevBB->lidarPoints.size() << endl;
+                cout << prevBB->boxID << ": "<< prevBB->lidarPoints.size() << ", " << currBB->boxID << ": "<< currBB->lidarPoints.size() << endl;
+                continue;
                 // compute TTC for current match
                 if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) // only compute TTC if we have Lidar points
                 {

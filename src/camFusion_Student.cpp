@@ -107,7 +107,8 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
         sprintf(str1, "id=%d, #pts=%d", it1->boxID, (int)it1->lidarPoints.size());
         putText(topviewImg, str1, cv::Point2f(left-250, bottom+50), cv::FONT_ITALIC, 2, currColor);
         sprintf(str2, "xmin=%2.2f m, yw=%2.2f m", xwmin, ywmax-ywmin);
-        putText(topviewImg, str2, cv::Point2f(left-250, bottom+125), cv::FONT_ITALIC, 2, currColor);  
+        putText(topviewImg, str2, cv::Point2f(left-250, bottom+125), cv::FONT_ITALIC, 2, currColor);
+        cout << "show3DPoints: " << it1->boxID << ", " <<  (int)it1->lidarPoints.size() << endl;
     }
 
     // plot distance markers
@@ -126,7 +127,6 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     // // TESTING
     string saveFolder = "/home/workspace/akshay/SFND_3D_Object_Tracking/result/FP5/";
     string saveName = saveFolder + imgName;
-    cout << saveName << endl;
     cv::imwrite(saveName, topviewImg);
     if(bWait)
     {
