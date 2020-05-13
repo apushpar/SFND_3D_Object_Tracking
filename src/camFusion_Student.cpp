@@ -124,8 +124,9 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     cv::namedWindow(windowName, 1);
     cv::imshow(windowName, topviewImg);
     // // TESTING
-    string saveFolder = "/home/workspace/akshay/SFND_3D_Object_Tracking/result/FP5";
+    string saveFolder = "/home/workspace/akshay/SFND_3D_Object_Tracking/result/FP5/";
     string saveName = saveFolder + imgName;
+    cout << saveName << endl;
     cv::imwrite(saveName, topviewImg);
     if(bWait)
     {
