@@ -134,7 +134,7 @@ int main(int argc, const char *argv[])
         // if(dataBuffer.size() == 1)
         if(bVis)
         {
-            show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(1000, 1000), true, , imgNumber.str() + imgFileType);
+            show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(1000, 1000), true, imgNumber.str() + imgFileType);
         }
         bVis = false;
 
