@@ -95,7 +95,7 @@ int main(int argc, const char *argv[])
         if (dataBuffer.size() > dataBufferSize)
             dataBuffer.erase(dataBuffer.begin());
 
-        cout << "#1 : LOAD IMAGE INTO BUFFER done: " << imgFullFilename << endl;
+        // cout << "#1 : LOAD IMAGE INTO BUFFER done: " << imgFullFilename << endl;
 
 
         /* DETECT & CLASSIFY OBJECTS */
@@ -237,9 +237,10 @@ int main(int argc, const char *argv[])
             //// TASK FP.1 -> match list of 3D objects (vector<BoundingBox>) between current and previous frame (implement ->matchBoundingBoxes)
             map<int, int> bbBestMatches;
             matchBoundingBoxes(matches, bbBestMatches, *(dataBuffer.end()-2), *(dataBuffer.end()-1)); // associate bounding boxes between current and previous frame using keypoint matches
-            for (const auto& x : bbBestMatches) {
-                std::cout << x.first << ": " << x.second << "\n";
-            }
+            //// DEBUG
+            // for (const auto& x : bbBestMatches) {
+            //     std::cout << x.first << ": " << x.second << "\n";
+            // }
             //// EOF STUDENT ASSIGNMENT
 
             // store matches in current data frame
@@ -270,7 +271,7 @@ int main(int argc, const char *argv[])
                         prevBB = &(*it2);
                     }
                 }
-                cout << prevBB->boxID << ": "<< prevBB->lidarPoints.size() << ", " << currBB->boxID << ": "<< currBB->lidarPoints.size() << endl;
+                // cout << prevBB->boxID << ": "<< prevBB->lidarPoints.size() << ", " << currBB->boxID << ": "<< currBB->lidarPoints.size() << endl;
                 // continue;
                 // compute TTC for current match
                 if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) // only compute TTC if we have Lidar points
@@ -282,7 +283,7 @@ int main(int argc, const char *argv[])
                     computeTTCLidar(prevBB->lidarPoints, currBB->lidarPoints, sensorFrameRate, ttcLidar);
 
                      // Visualize 3D objects
-                    bVis = true;
+                    bVis = false;
                     if(bVis)
                     {
                         show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(1000, 1000), true, imgNumber.str() + imgFileType);
