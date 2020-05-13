@@ -61,7 +61,8 @@ void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<Li
 }
 
 
-void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait)
+// void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait)
+void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait, string imgName)
 {
     // create topview image
     cv::Mat topviewImg(imageSize, CV_8UC3, cv::Scalar(255, 255, 255));
@@ -122,7 +123,10 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     string windowName = "3D Objects";
     cv::namedWindow(windowName, 1);
     cv::imshow(windowName, topviewImg);
-
+    // // TESTING
+    string saveFolder = "/home/workspace/akshay/SFND_3D_Object_Tracking/result/FP5";
+    string saveName = saveFolder + imgName;
+    cv::imwrite(saveName, topviewImg);
     if(bWait)
     {
         cv::waitKey(0); // wait for key to be pressed
@@ -224,40 +228,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         }
     }
     cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
-    
-    // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
-    // { // outer kpt. loop
-    //     // get current keypoint and its matched partner in the prev. frame
-    //     cv::KeyPoint kpOuterCurr = kptsCurr.at(it1->trainIdx);
-    //     cv::KeyPoint kpOuterPrev = kptsPrev.at(it1->queryIdx);
-    //     bool isOutlier = false;
-    //     for (auto it2 = matchesForBB.begin() + 1; it2 != matchesForBB.end(); ++it2)
-    //     { // inner kpt.-loop
 
-    //         // get next keypoint and its matched partner in the prev. frame
-    //         cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
-    //         cv::KeyPoint kpInnerPrev = kptsPrev.at(it2->queryIdx);
-
-    //         // compute distances and distance ratios
-    //         double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
-    //         double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
-
-    //         if (distPrev > std::numeric_limits<double>::epsilon())
-    //         { // avoid division by zero
-
-    //             double distRatio = distCurr / distPrev;
-    //             if ((distRatio > q3DistRatio + iqrFactor*iqr) || (distRatio < q1DistRatio - iqrFactor*iqr))
-    //             {
-    //                 cout << distRatio << ", " << q3DistRatio + iqrFactor*iqr << ", " << q1DistRatio - iqrFactor*iqr << endl;
-    //                 isOutlier = true;
-    //                 break;
-    //             }
-    //         }
-    //     } // eof inner loop over all matched kpts
-    //     if (!isOutlier)
-    //         boundingBox.kptMatches.push_back(*it1);
-    // }     // eof outer loop over all matched kpts
-    // cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
 }
 
 
@@ -369,9 +340,9 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
         prevMinXValueRobust = prevxwMin;
         currMinXValueRobust = currxwMin;
     }
-    cout << prevMinXValueRobust << ", " << currMinXValueRobust << endl;
     double dT = 1 / frameRate;
     TTC = currMinXValueRobust * dT / (prevMinXValueRobust - currMinXValueRobust);
+    cout << useMedian << ", " << queue_size << ", " << frameRate << ", " << prevMinXValueRobust << ", " << currMinXValueRobust << ", "<< TTC << endl;
 }
 
 
