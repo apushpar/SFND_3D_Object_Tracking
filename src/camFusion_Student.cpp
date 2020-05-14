@@ -252,8 +252,8 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
     // std::sort(distRatios.begin(), distRatios.end());
     double medianDistRatio = getMedianFromVector(distRatios, 0, distRatios.size()-1);
-    cout << "meanDistanceRatio: " << meanDistRatio << endl;
-    cout << "medianDistanceRatio: " << medianDistRatio << endl;
+    // cout << "meanDistanceRatio: " << meanDistRatio << endl;
+    // cout << "medianDistanceRatio: " << medianDistRatio << endl;
     double dT = 1 / frameRate;
     TTC = -dT / (1 - medianDistRatio);
 

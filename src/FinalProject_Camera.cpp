@@ -215,7 +215,7 @@ void project(string detectorType, string descriptorType)
         {
 
             /* MATCH KEYPOINT DESCRIPTORS */
-
+            cout << imgNumber.str() << ", " << detectorType << ", " << descriptorType << ", ";
             vector<cv::DMatch> matches;
             string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
             string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
@@ -297,7 +297,7 @@ void project(string detectorType, string descriptorType)
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.3 -> assign enclosed keypoint matches to bounding box (implement -> clusterKptMatchesWithROI)
                     //// TASK FP.4 -> compute time-to-collision based on camera (implement -> computeTTCCamera)
-                    cout << imgNumber.str() << ", " << detectorType << ", " << descriptorType << ", ";
+                    
                     double ttcCamera;
                     clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
                     computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
