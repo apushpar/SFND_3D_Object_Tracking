@@ -97,7 +97,7 @@ void project(string detectorType, string descriptorType)
             dataBuffer.erase(dataBuffer.begin());
 
         // cout << "#1 : LOAD IMAGE INTO BUFFER done: " << imgFullFilename << endl;
-
+        cout << imgNumber.str() << ", " << detectorType << ", " << descriptorType << ", ";
 
         /* DETECT & CLASSIFY OBJECTS */
 
@@ -215,7 +215,6 @@ void project(string detectorType, string descriptorType)
         {
 
             /* MATCH KEYPOINT DESCRIPTORS */
-            cout << imgNumber.str() << ", " << detectorType << ", " << descriptorType << ", ";
             vector<cv::DMatch> matches;
             string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
             string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
