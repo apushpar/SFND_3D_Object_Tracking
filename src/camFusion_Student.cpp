@@ -191,8 +191,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
         }
     }
     // boundingBox.kptMatches = matchesForBB;
-
-    cout << "org bb matches count: " << matchesForBB.size() << endl;
+    cout << matchesForBB.size() << ", ";
+    // cout << "org bb matches count: " << matchesForBB.size() << endl;
 
     // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
     // vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
@@ -201,21 +201,21 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
     // {
 
     // }
-    cout << "Euclidean distances: ";
-    for (double dist: eucDistances)
-        cout << dist << ", ";
-    cout << endl;
+    // cout << "Euclidean distances: ";
+    // for (double dist: eucDistances)
+    //     cout << dist << ", ";
+    // cout << endl;
     double q1Dist = getMedianFromVector(eucDistances, 0, eucDistances.size()/2 - 1);
     double q3Dist = getMedianFromVector(eucDistances, eucDistances.size()/2 + 1, eucDistances.size() - 1);
     double meanDist = std::accumulate(eucDistances.begin(), eucDistances.end(), 0.0) / eucDistances.size();
     double medianDist = getMedianFromVector(eucDistances, 0, eucDistances.size() - 1);
     double iqr = q3Dist - q1Dist;
     double iqrFactor = 1.2;
-    cout << "MeanDist: " << meanDist << endl;
-    cout << "MedianDist: " << medianDist << endl;
-    cout << "IQR: " << iqr << endl;
-    cout << "IQR lower bound: " << q1Dist - iqrFactor*iqr << endl;
-    cout << "IQR upper bound: " << q3Dist + iqrFactor*iqr << endl;
+    // cout << "MeanDist: " << meanDist << endl;
+    // cout << "MedianDist: " << medianDist << endl;
+    // cout << "IQR: " << iqr << endl;
+    // cout << "IQR lower bound: " << q1Dist - iqrFactor*iqr << endl;
+    // cout << "IQR upper bound: " << q3Dist + iqrFactor*iqr << endl;
 
     double rangeFactor = 2.5;
     for (cv::DMatch match: matchesForBB)
@@ -228,7 +228,8 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             boundingBox.kptMatches.push_back(match);
         }
     }
-    cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
+    // cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
+    cout << boundingBox.kptMatches.size() << ", ";
 
 }
 
@@ -343,7 +344,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
     }
     double dT = 1 / frameRate;
     TTC = currMinXValueRobust * dT / (prevMinXValueRobust - currMinXValueRobust);
-    cout << useMedian << ", " << queue_size << ", " << frameRate << ", " << prevMinXValueRobust << ", " << currMinXValueRobust << ", "<< TTC << endl;
+    // cout << useMedian << ", " << queue_size << ", " << frameRate << ", " << prevMinXValueRobust << ", " << currMinXValueRobust << ", "<< TTC << endl;
 }
 
 

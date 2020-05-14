@@ -23,7 +23,8 @@
 using namespace std;
 
 /* MAIN PROGRAM */
-int main(int argc, const char *argv[])
+// int main(int argc, const char *argv[])
+void project(string detectorType, string descriptorType)
 {
     /* INIT VARIABLES AND DATA STRUCTURES */
 
@@ -155,7 +156,7 @@ int main(int argc, const char *argv[])
         // string detectorType = "SHITOMASI";
         // string detectorType = "HARRIS";
         // string detectorType = "FAST";
-        string detectorType = "BRISK";
+        // string detectorType = "BRISK";
         // string detectorType = "ORB";
         // string detectorType = "AKAZE";
         // string detectorType = "SIFT";
@@ -197,7 +198,7 @@ int main(int argc, const char *argv[])
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+        // string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
         // string descriptorType = "ORB";
         // string descriptorType = "FREAK";
         // string descriptorType = "AKAZE";
@@ -278,7 +279,7 @@ int main(int argc, const char *argv[])
                 {
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.2 -> compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
-                    cout << imgNumber.str() << ", " << prevBB->lidarPoints.size() << ", " << currBB->lidarPoints.size() << ", ";
+                    // cout << imgNumber.str() << ", " << prevBB->lidarPoints.size() << ", " << currBB->lidarPoints.size() << ", ";
                     double ttcLidar; 
                     computeTTCLidar(prevBB->lidarPoints, currBB->lidarPoints, sensorFrameRate, ttcLidar);
 
@@ -289,17 +290,19 @@ int main(int argc, const char *argv[])
                         show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(1000, 1000), true, imgNumber.str() + imgFileType);
                     }
                     bVis = false;
-                    continue;
-                    cout << "ttclidar: " << ttcLidar << endl;
+                    // continue;
+                    // cout << "ttclidar: " << ttcLidar << endl;
                     //// EOF STUDENT ASSIGNMENT
 
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.3 -> assign enclosed keypoint matches to bounding box (implement -> clusterKptMatchesWithROI)
                     //// TASK FP.4 -> compute time-to-collision based on camera (implement -> computeTTCCamera)
+                    cout << imgNumber.str() << ", " << detectorType << ", " << descriptorType << ", ";
                     double ttcCamera;
                     clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
                     computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
-                    cout << "ttc camera: " << ttcCamera << endl;
+                    cout << ttcCamera << ", " << ttcLidar;
+                    // cout << "ttc camera: " << ttcCamera << endl;
                     //// EOF STUDENT ASSIGNMENT
 
                     bVis = false;
@@ -329,5 +332,5 @@ int main(int argc, const char *argv[])
 
     } // eof loop over all images
 
-    return 0;
+    // return 0;
 }
