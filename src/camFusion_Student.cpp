@@ -308,7 +308,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
     // ...
-    bool useMedian = false;
+    bool useMedian = true;
     priority_queue <float> prevMinXQueue;
     priority_queue <float> currMinXQueue;
     float prevxwMin = 1e8, currxwMin = 1e8;
