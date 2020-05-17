@@ -23,8 +23,7 @@
 using namespace std;
 
 /* MAIN PROGRAM */
-// int main(int argc, const char *argv[])
-void project(string detectorType, string descriptorType)
+int main(int argc, const char *argv[])
 {
     /* INIT VARIABLES AND DATA STRUCTURES */
 
@@ -96,8 +95,8 @@ void project(string detectorType, string descriptorType)
         if (dataBuffer.size() > dataBufferSize)
             dataBuffer.erase(dataBuffer.begin());
 
-        // cout << "#1 : LOAD IMAGE INTO BUFFER done: " << imgFullFilename << endl;
-        cout << imgNumber.str() << ", " << detectorType << ", " << descriptorType << ", ";
+        cout << "#1 : LOAD IMAGE INTO BUFFER done: " << imgFullFilename << endl;
+
 
         /* DETECT & CLASSIFY OBJECTS */
 
@@ -106,7 +105,7 @@ void project(string detectorType, string descriptorType)
         detectObjects((dataBuffer.end() - 1)->cameraImg, (dataBuffer.end() - 1)->boundingBoxes, confThreshold, nmsThreshold,
                       yoloBasePath, yoloClassesFile, yoloModelConfiguration, yoloModelWeights, bVis);
 
-        // cout << "#2 : DETECT & CLASSIFY OBJECTS done" << endl;
+        cout << "#2 : DETECT & CLASSIFY OBJECTS done" << endl;
 
         /* CROP LIDAR POINTS */
 
@@ -121,7 +120,7 @@ void project(string detectorType, string descriptorType)
     
         (dataBuffer.end() - 1)->lidarPoints = lidarPoints;
 
-        // cout << "#3 : CROP LIDAR POINTS done" << endl;
+        cout << "#3 : CROP LIDAR POINTS done" << endl;
 
 
         /* CLUSTER LIDAR POINT CLOUD */
@@ -132,14 +131,13 @@ void project(string detectorType, string descriptorType)
 
         // Visualize 3D objects
         bVis = false;
-        // if(dataBuffer.size() == 1)
         if(bVis)
         {
             show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(1000, 1000), true, imgNumber.str() + imgFileType);
         }
         bVis = false;
 
-        // cout << "#4 : CLUSTER LIDAR POINT CLOUD done" << endl;
+        cout << "#4 : CLUSTER LIDAR POINT CLOUD done" << endl;
         
         
         // REMOVE THIS LINE BEFORE PROCEEDING WITH THE FINAL PROJECT
@@ -159,7 +157,7 @@ void project(string detectorType, string descriptorType)
         // string detectorType = "BRISK";
         // string detectorType = "ORB";
         // string detectorType = "AKAZE";
-        // string detectorType = "SIFT";
+        string detectorType = "SIFT";
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
@@ -192,13 +190,13 @@ void project(string detectorType, string descriptorType)
         // push keypoints and descriptor for current frame to end of data buffer
         (dataBuffer.end() - 1)->keypoints = keypoints;
 
-        // cout << "#5 : DETECT KEYPOINTS done" << endl;
+        cout << "#5 : DETECT KEYPOINTS done" << endl;
 
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         cv::Mat descriptors;
-        // string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
         // string descriptorType = "ORB";
         // string descriptorType = "FREAK";
         // string descriptorType = "AKAZE";
@@ -208,7 +206,7 @@ void project(string detectorType, string descriptorType)
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;
 
-        // cout << "#6 : EXTRACT DESCRIPTORS done" << endl;
+        cout << "#6 : EXTRACT DESCRIPTORS done" << endl;
 
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
@@ -228,7 +226,7 @@ void project(string detectorType, string descriptorType)
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
 
-            // cout << "#7 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            cout << "#7 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             
             /* TRACK 3D OBJECT BOUNDING BOXES */
@@ -246,7 +244,7 @@ void project(string detectorType, string descriptorType)
             // store matches in current data frame
             (dataBuffer.end()-1)->bbMatches = bbBestMatches;
 
-            // cout << "#8 : TRACK 3D OBJECT BOUNDING BOXES done" << endl;
+            cout << "#8 : TRACK 3D OBJECT BOUNDING BOXES done" << endl;
 
 
             /* COMPUTE TTC ON OBJECT IN FRONT */
@@ -271,14 +269,12 @@ void project(string detectorType, string descriptorType)
                         prevBB = &(*it2);
                     }
                 }
-                // cout << prevBB->boxID << ": "<< prevBB->lidarPoints.size() << ", " << currBB->boxID << ": "<< currBB->lidarPoints.size() << endl;
                 // continue;
                 // compute TTC for current match
                 if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) // only compute TTC if we have Lidar points
                 {
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.2 -> compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
-                    // cout << imgNumber.str() << ", " << prevBB->lidarPoints.size() << ", " << currBB->lidarPoints.size() << ", ";
                     double ttcLidar; 
                     computeTTCLidar(prevBB->lidarPoints, currBB->lidarPoints, sensorFrameRate, ttcLidar);
 
@@ -290,7 +286,7 @@ void project(string detectorType, string descriptorType)
                     }
                     bVis = false;
                     // continue;
-                    // cout << "ttclidar: " << ttcLidar << endl;
+
                     //// EOF STUDENT ASSIGNMENT
 
                     //// STUDENT ASSIGNMENT
@@ -300,8 +296,6 @@ void project(string detectorType, string descriptorType)
                     double ttcCamera;
                     clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
                     computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
-                    cout << ttcCamera << ", " << ttcLidar;
-                    // cout << "ttc camera: " << ttcCamera << endl;
                     //// EOF STUDENT ASSIGNMENT
 
                     bVis = false;
@@ -331,5 +325,5 @@ void project(string detectorType, string descriptorType)
 
     } // eof loop over all images
 
-    // return 0;
+    return 0;
 }

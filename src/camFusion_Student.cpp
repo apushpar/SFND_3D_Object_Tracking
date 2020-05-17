@@ -61,8 +61,7 @@ void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<Li
 }
 
 
-// void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait)
-void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait, string imgName)
+void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, cv::Size imageSize, bool bWait)
 {
     // create topview image
     cv::Mat topviewImg(imageSize, CV_8UC3, cv::Scalar(255, 255, 255));
@@ -125,9 +124,9 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     cv::namedWindow(windowName, 1);
     cv::imshow(windowName, topviewImg);
     // // TESTING
-    string saveFolder = "/home/workspace/akshay/SFND_3D_Object_Tracking/result/FP5/";
-    string saveName = saveFolder + imgName;
-    cv::imwrite(saveName, topviewImg);
+    // string saveFolder = "/home/workspace/akshay/SFND_3D_Object_Tracking/result/FP5/";
+    // string saveName = saveFolder + imgName;
+    // cv::imwrite(saveName, topviewImg);
     if(bWait)
     {
         cv::waitKey(0); // wait for key to be pressed
@@ -190,27 +189,14 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             eucDistances.push_back(dist);
         }
     }
-    // boundingBox.kptMatches = matchesForBB;
-    cout << matchesForBB.size() << ", ";
-    // cout << "org bb matches count: " << matchesForBB.size() << endl;
 
     // for outlier removal (https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/box-whisker-plots/a/identifying-outliers-iqr-rule)
-    // vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame    
-    // getKeyPointDistanceRatios(kptsPrev, kptsCurr, matchesForBB, distRatios);
-    // for (auto it1 = matchesForBB.begin(); it1 != matchesForBB.end() - 1; ++it1)
-    // {
-
-    // }
-    // cout << "Euclidean distances: ";
-    // for (double dist: eucDistances)
-    //     cout << dist << ", ";
-    // cout << endl;
-    double q1Dist = getMedianFromVector(eucDistances, 0, eucDistances.size()/2 - 1);
-    double q3Dist = getMedianFromVector(eucDistances, eucDistances.size()/2 + 1, eucDistances.size() - 1);
-    double meanDist = std::accumulate(eucDistances.begin(), eucDistances.end(), 0.0) / eucDistances.size();
+    // double q1Dist = getMedianFromVector(eucDistances, 0, eucDistances.size()/2 - 1);
+    // double q3Dist = getMedianFromVector(eucDistances, eucDistances.size()/2 + 1, eucDistances.size() - 1);
+    // double meanDist = std::accumulate(eucDistances.begin(), eucDistances.end(), 0.0) / eucDistances.size();
     double medianDist = getMedianFromVector(eucDistances, 0, eucDistances.size() - 1);
-    double iqr = q3Dist - q1Dist;
-    double iqrFactor = 1.2;
+    // double iqr = q3Dist - q1Dist;
+    // double iqrFactor = 1.2;
     // cout << "MeanDist: " << meanDist << endl;
     // cout << "MedianDist: " << medianDist << endl;
     // cout << "IQR: " << iqr << endl;
@@ -228,7 +214,6 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             boundingBox.kptMatches.push_back(match);
         }
     }
-    // cout << "final bb count: " << boundingBox.kptMatches.size() << endl;
     cout << boundingBox.kptMatches.size() << ", ";
 
 }
@@ -249,7 +234,7 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     }
 
     // compute camera-based TTC from distance ratios
-    double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
+    // double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
     // std::sort(distRatios.begin(), distRatios.end());
     double medianDistRatio = getMedianFromVector(distRatios, 0, distRatios.size()-1);
     // cout << "meanDistanceRatio: " << meanDistRatio << endl;
