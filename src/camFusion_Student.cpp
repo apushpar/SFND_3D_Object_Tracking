@@ -214,7 +214,7 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
             boundingBox.kptMatches.push_back(match);
         }
     }
-    cout << boundingBox.kptMatches.size() << ", ";
+
 
 }
 
